@@ -53,7 +53,7 @@ This project is a web application built with Next.js that allows users to browse
     ```bash
     npm run dev
     ```
-5.  Open [http://localhost:3000](http://localhost:3000) (or the specified port) in your browser.
+5.  Open [http://localhost:3000/posts](http://localhost:3000/posts) (or the specified port) in your browser.
 
 ## Starting the backend
 
