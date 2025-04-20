@@ -12,7 +12,7 @@ export default function CategorySidebar() {
         categories,
         setCategories,
         selectedCategoryId,
-        setSelectedCategoryId,
+        selectCategory,
         isLoadingCategories,
         categoriesError, 
     } = useCategoryContext();
@@ -25,7 +25,7 @@ export default function CategorySidebar() {
 
     // Define the missing handler
     const handleSelectCategory = (categoryId: string) => {
-        setSelectedCategoryId(categoryId);
+        selectCategory(categoryId)
     };
 
     const displayedCategories = categories.filter(category => {

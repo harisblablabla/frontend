@@ -1,25 +1,32 @@
 // src/context/CategoryContext.tsx
 'use client';
 
-import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { getCategories } from '@/lib/api';
-import type { Category } from '@/types';  
+import type { Category } from '@/types';
 
 interface CategoryContextType {
     categories: Category[];
-    setCategories: Dispatch<SetStateAction<Category[]>>; 
+    setCategories: Dispatch<SetStateAction<Category[]>>;
     selectedCategoryId: string | null;
-    setSelectedCategoryId: Dispatch<SetStateAction<string | null>>;
+    selectCategory: (categoryId: string | null) => void
     selectedCategoryName: string | undefined;
-    isLoadingCategories: boolean; 
+    isLoadingCategories: boolean;
     categoriesError: string | null;
 }
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
 export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
     const [categories, setCategories] = useState<Category[]>([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(() => {
+        return searchParams.get('category')
+    });
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
@@ -28,7 +35,7 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
             setIsLoadingCategories(true);
             setCategoriesError(null);
             try {
-                const fetchedCategories = await getCategories(); 
+                const fetchedCategories = await getCategories();
                 setCategories(fetchedCategories || []);
             } catch (err) {
                 console.error("Failed to fetch initial categories:", err);
@@ -40,20 +47,45 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
         };
 
         fetchInitialCategories();
-    }, []); 
+    }, []);
+
+    useEffect(() => {
+        setSelectedCategoryId(searchParams.get('category'));
+    }, [searchParams])
 
     const selectedCategoryName = React.useMemo(() => {
         return categories.find(cat => cat.id === selectedCategoryId)?.name;
     }, [categories, selectedCategoryId]);
 
+    // --- Function to handle category selection AND update URL ---
+    const selectCategory = useCallback((categoryId: string | null) => {
+        setSelectedCategoryId(categoryId);
+
+        // Update URL Search Params
+        const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+        if (!categoryId) {
+            current.delete('category'); // Remove param if null category is selected
+        } else {
+            current.set('category', categoryId); // Set the new category ID
+        }
+
+        // Create the new search string
+        const search = current.toString();
+        const query = search ? `?${search}` : "";
+        router.push(`${pathname}${query}`);
+
+    }, [searchParams, pathname, router]);
+
     const value = {
         categories,
         setCategories, // Keep this setter for optimistic updates in Sidebar
         selectedCategoryId,
+        selectCategory,
         setSelectedCategoryId,
         selectedCategoryName,
         isLoadingCategories,
-        categoriesError,   
+        categoriesError,
     };
 
     return (
