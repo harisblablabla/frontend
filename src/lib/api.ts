@@ -1,4 +1,4 @@
-import { Category, CreateCategoryInput } from "@/types";
+import { Category, CreateCategoryInput, Post } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http:localhost:9000'
 
@@ -50,6 +50,10 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getCategoriesById(id: string): Promise<Category> {
     return apiFetch<Category>(`/categories/${encodeURIComponent(id)}`)
+}
+
+export async function getPostByCategories(id: string): Promise<Post[]> {
+    return apiFetch<Post[]>(`/categories/${encodeURIComponent(id)}/posts`)
 }
 
 export async function createNewCategory(data: CreateCategoryInput): Promise<Category> {
