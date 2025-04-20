@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode } from "react";
 
 type iconType = | ReactNode | {
   icon: ReactNode,
-  onClick: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
+  onClick?: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
 };
 
 interface ButtonProps {
@@ -50,9 +51,10 @@ const Button: React.FC<ButtonProps> = ({
     >
       {startIcon && <span className="flex items-center"
         onClick={(e) => {
-          if (typeof startIcon === "object" && "onClick" in startIcon) {
+          const handler = (startIcon as any)?.onClick
+          if (typeof handler === "function") {
             e.stopPropagation() // prevent button click
-            startIcon.onClick(e)
+            handler(e)
           }
         }}
       >{typeof startIcon === "object" && "icon" in startIcon ? startIcon.icon : startIcon}</span>}
@@ -63,9 +65,10 @@ const Button: React.FC<ButtonProps> = ({
         <span
           className="flex items-center"
           onClick={(e) => {
-            if (typeof endIcon === "object" && "onClick" in endIcon) {
+            const handler = (endIcon as any)?.onClick
+            if (typeof handler === "function") {
               e.stopPropagation(); // prevent button click
-              endIcon.onClick(e);
+              handler(e)
             }
           }}
         >
