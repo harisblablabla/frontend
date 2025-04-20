@@ -61,7 +61,7 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
     const month = date.toLocaleString('en-US', { month: 'long' });
     const day = date.getDate();
     const year = date.getFullYear();
-    
+
     const suffix =
       day % 10 === 1 && day !== 11
         ? 'st'
@@ -120,7 +120,7 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       {/* Header showing results count and category - No change needed */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-5 pb-3 border-b border-gray-300">
+      <h2 className="text-sm font-semibold text-gray-500 mb-5 pb-3 border-b border-gray-300">
         Found {totalPosts} posts
         {selectedCategoryName ? ` of "${selectedCategoryName}"` : ''}
       </h2>
@@ -138,8 +138,8 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
             key={post.id}
             className="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0"
           >
-            <p className="text-sm text-gray-500 mb-2">{formatReadableDate(post.date)}</p>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="text-sm font-semibold text-gray-700 mb-2">{formatReadableDate(post.date)}</p>
+            <p className="text-sm text-stone-500 leading-relaxed mb-4 font-normal">
               {post.description}
             </p>
             <div className="flex flex-wrap gap-2">
