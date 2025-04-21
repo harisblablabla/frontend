@@ -21,7 +21,7 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    //If no category is selected, clear posts and don't fetch
+    //If no category is selected, clear posts
     if (!selectedCategoryId) {
       setPosts([]);
       setTotalPosts(0);
@@ -55,6 +55,7 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
   }, [selectedCategoryId]);
 
   function formatReadableDate(dateString: string): string {
+    //format date from yyyy-mm-dd into custom fulldate
     const date = new Date(dateString);
 
     const weekday = date.toLocaleString('en-US', { weekday: 'long' });
@@ -119,19 +120,20 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
   //Display Post
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      {/* Header showing results count and category - No change needed */}
+      {/* Header showing results count and selected category */}
       <h2 className="text-sm font-semibold text-gray-500 mb-5 pb-3 border-b border-gray-300">
         Found {totalPosts} posts
         {selectedCategoryName ? ` of "${selectedCategoryName}"` : ''}
       </h2>
 
-      {/* No Posts Found Message */}
+      {/* No Posts Found Message / empty data */}
       {posts.length === 0 && !isLoading && (
         <div className="flex items-center justify-center py-10 text-gray-500">
           <p>No posts found for &quot;{selectedCategoryName || 'this category'}&quot;</p>
         </div>
       )}
 
+      {/* display data from post fetchdata */}
       <div className="space-y-6">
         {posts.map((post) => (
           <article
@@ -143,6 +145,7 @@ const PostList = ({ selectedCategoryId, selectedCategoryName, categories }: Post
               {post.description}
             </p>
             <div className="flex flex-wrap gap-2">
+              {/*  show the button same with in the sidebar  */}
               {post.categories.map((catId, index) => {
                 const isSelected = catId === selectedCategoryId;
                 const categoryDetails = categories.find(cat => cat.id === catId)
