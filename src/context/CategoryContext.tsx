@@ -1,4 +1,3 @@
-// src/context/CategoryContext.tsx
 'use client';
 
 import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
@@ -30,6 +29,7 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
+    //fetch initial categories
     useEffect(() => {
         const fetchInitialCategories = async () => {
             setIsLoadingCategories(true);
@@ -48,16 +48,18 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
 
         fetchInitialCategories();
     }, []);
-
+    
+    //update selectedCategoryId while change the category
     useEffect(() => {
         setSelectedCategoryId(searchParams.get('category'));
     }, [searchParams])
 
+    //return selected category
     const selectedCategoryName = React.useMemo(() => {
         return categories.find(cat => cat.id === selectedCategoryId)?.name;
     }, [categories, selectedCategoryId]);
 
-    // --- Function to handle category selection AND update URL ---
+    //handle category selection AND update URL
     const selectCategory = useCallback((categoryId: string | null) => {
         setSelectedCategoryId(categoryId);
 
@@ -79,7 +81,7 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const value = {
         categories,
-        setCategories, // Keep this setter for optimistic updates in Sidebar
+        setCategories,
         selectedCategoryId,
         selectCategory,
         setSelectedCategoryId,
@@ -95,6 +97,7 @@ export const CategoryProvider: React.FC<{ children: ReactNode }> = ({ children }
     );
 };
 
+//access a context value from a CategoryContext
 export const useCategoryContext = (): CategoryContextType => {
     const context = useContext(CategoryContext);
     if (context === undefined) {
